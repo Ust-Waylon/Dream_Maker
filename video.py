@@ -42,6 +42,7 @@ if __name__ == "__main__":
     - How would you describe the desired color palette for the video?
     - Is there anything else you would like to add or clarify about your vision for the video?
     - Any specific camera angle or focus on the main body you'd prefer?
+    You can also ask me other questions if you think that's neccessary.
     
     If you think you have enough information, you can start to generate the prompt.
     
