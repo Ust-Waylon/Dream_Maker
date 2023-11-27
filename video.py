@@ -14,13 +14,14 @@ def append_user_message(messages, user_content):
     messages.append({"role": "user", "content": user_content})
     
 def get_response(messages):
-    openai.api_key = "f0bf0799408d4ec3bda899ec85adb877"
+    openai.api_key = "9caacd23ebca451593bf09eda10b006f"
     openai.api_base = "https://hkust.azure-api.net"
     openai.api_type = "azure"
     openai.api_version = "2023-05-15"
     
     response = openai.ChatCompletion.create(
-        engine="gpt-35-turbo-16k",
+        # engine="gpt-35-turbo-16k",
+        engine="gpt-4-32k",
         messages=messages
     )
     
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     8. If the prompt input violates OpenAI content policy, halt the process and ask the user to input positive imagery
     
     When you propose a prompt, please clearly state the prompt in a pair of double quotation marks, like this:
-    - Here is my prompt: "a light and cheerly EDM track, with syncopated drums, aery pads, and strong emotions bom: 130'
+    - Here is my prompt: "close up photo of a rabbit, forest, haze, halation, bloom, dramatic atmosphere'
     
     Here are some good examples of output:
     {
@@ -82,15 +83,16 @@ if __name__ == "__main__":
     }
     """
     
-    messages = init_messages(system_content)
-    
     # build an interface using gradio
     with gr.Blocks() as demo:
+        messages = init_messages(system_content)
+        
         gr.Markdown(
         """
         # Dream-maker Demo for Video-generation
         Type to chat with our chatbot.
         """)
+        
         greet_message = """
         Hi, this is Dream-maker.
         Tell me anything, and I will turn your dream into an amazing video.
@@ -105,7 +107,7 @@ if __name__ == "__main__":
             bot_message = get_response(messages)
             chat_history.append((message, bot_message))
             return "", chat_history
-
+        
         msg.submit(respond, [msg, chatbot], [msg, chatbot])
         
     demo.launch()

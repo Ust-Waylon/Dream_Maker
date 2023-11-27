@@ -77,10 +77,16 @@ if __name__ == "__main__":
     Please remember! The final output should be no more than two sentencens with at most 25 words.
     """
     
-    messages = init_messages(system_content)
-    
     # build an interface using gradio
     with gr.Blocks() as demo:
+        messages = init_messages(system_content)
+        
+        gr.Markdown(
+        """
+        # Dream-maker Demo for Video-generation
+        Type to chat with our chatbot.
+        """)
+        
         greet_message = """
         Hi, this is Dream-maker.
         Now let's move on to create a backgound music for the video.
