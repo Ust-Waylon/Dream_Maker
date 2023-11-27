@@ -14,7 +14,7 @@ def append_user_message(messages, user_content):
     messages.append({"role": "user", "content": user_content})
     
 def get_response(messages):
-    openai.api_key = "f0bf0799408d4ec3bda899ec85adb877"
+    openai.api_key = "9caacd23ebca451593bf09eda10b006f"
     openai.api_base = "https://hkust.azure-api.net"
     openai.api_type = "azure"
     openai.api_version = "2023-05-15"
@@ -81,18 +81,19 @@ if __name__ == "__main__":
     }
     """
     
-    messages = init_messages(system_content)
-    
     # build an interface using gradio
     with gr.Blocks() as demo:
+        messages = init_messages(system_content)
+        
         gr.Markdown(
         """
         # Dream-maker Demo for Video-generation
         Type to chat with our chatbot.
         """)
+        
         greet_message = """
         Hi, this is Dream-maker.
-        Tell me anything, and I will turn your dream into a amazing video.
+        Tell me anything, and I will turn your dream into an amazing video.
         """
         append_assistant_message(messages, greet_message)
         
