@@ -20,7 +20,8 @@ def get_response(messages):
     openai.api_version = "2023-05-15"
     
     response = openai.ChatCompletion.create(
-        engine="gpt-35-turbo-16k",
+        # engine="gpt-35-turbo-16k",
+        engine="gpt-4-32k",
         messages=messages
     )
     
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     8. If the prompt input violates OpenAI content policy, halt the process and ask the user to input positive imagery
     
     When you propose a prompt, please clearly state the prompt in a pair of double quotation marks, like this:
-    - Here is my prompt: "a light and cheerly EDM track, with syncopated drums, aery pads, and strong emotions bom: 130'
+    - Here is my prompt: "close up photo of a rabbit, forest, haze, halation, bloom, dramatic atmosphere'
     
     Here are some good examples of output:
     {
@@ -106,7 +107,7 @@ if __name__ == "__main__":
             bot_message = get_response(messages)
             chat_history.append((message, bot_message))
             return "", chat_history
-
+        
         msg.submit(respond, [msg, chatbot], [msg, chatbot])
         
     demo.launch()
