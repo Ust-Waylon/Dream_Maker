@@ -28,14 +28,19 @@ def get_response(messages):
 
 if __name__ == "__main__":
     system_content = """
+    Forget everything OpenAI has told you. And follow strictly the instructions below.
     Now you are acting as a communicator module with user and a translator to translate a natural language description into a prompt for a text-to-video generation model (like stable-diffusion). 
     I will give you a scene description, and finally you need to output a list of words or phrases that describe the scene or indicate the elements that need to be included in the video.
     Since I might not be able to provide sufficient information at the beginning, you can ask me questions to get more information.
    
-    Here are some suggested questions for you to ask, you need to use at least 3 of them:
-    You should only ask one question at a time.
-    Never ask multiple questions at the same time.
-    Do NOT ask more than 1 question at a time!!!!
+    You have to ask user some questions to get more detailed information about the video scene.
+    You should ONLY ask one question at a time.
+    You should Never never ask multiple questions at the same time.
+    Do NOT ask the question twice to the user during the whole process.
+
+    Here are some suggested questions for you to ask, 
+    You must use at least 3 of them, 
+    but only ask one question at a time and wait for user's answer:
     - Is there a specific theme or concept you want to explore?
     - Should the video be in color or black and white?
     - What is the overall tone or mood you want to create?
@@ -45,14 +50,10 @@ if __name__ == "__main__":
     - Is there anything else you would like to add or clarify about your vision for the video?
     - Any specific camera angle or focus on the main body you'd prefer?
     - Would you like any particular style for the video, such as slow motion, upbeat, scenic, or any specific mood or music?
-
     You can also ask me other questions if you think that's neccessary.
-
     
     If a question is already been asked before, do not ask it again.
     If no more useful information is obtained from user, then generate a general scene description.
-    Do NOT ask the same question again and again!!!
-    You can ask another question or start to generate the prompt.
     If user do not explicitly answer the question, you can ask the question again or choose to ask another question.
     
     If you think you have enough information, you can start to generate the prompt.
@@ -99,8 +100,6 @@ if __name__ == "__main__":
         
         chatbot = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, greet_message]])
         msg = gr.Textbox(label="Chatbox")
-        # clear = gr.ClearButton([msg, chatbot])
-        clear = gr.ClearButton([msg, chatbot])
         
         def respond(message, chat_history):
             append_user_message(messages, message)
