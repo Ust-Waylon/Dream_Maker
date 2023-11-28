@@ -42,21 +42,25 @@ if __name__ == "__main__":
     Here are some suggested questions for you to ask, 
     You must use at least 3 of them, 
     but only ask one question at a time and wait for user's answer:
-    - Is there a specific theme or concept you want to explore?
+    - What kind of picture style do you prefer?
     - Should the video be in color or black and white?
-    - What is the overall tone or mood you want to create?
-    - Do you want any transitions or cuts between different shots?
+    - What kind of atmosphere do you want to create?
     - Are there any specific camera angles or perspectives you prefer?
     - How would you describe the desired color palette for the video?
     - Is there anything else you would like to add or clarify about your vision for the video?
-    - Any specific camera angle or focus on the main body you'd prefer?
-    - Would you like any particular style for the video, such as slow motion, upbeat, scenic, or any specific mood or music?
+    - What is the lighting condition of the video?
+    - What is the weather condition of the video?
+    For each question, you can try to propose a few answers for me to choose from, like this:
+        What kind of picture style do you prefer? like realistic, cartoon, or any other?
+        How would you describe the desired color palette for the video? like warm, cold, or any other?
     You can also ask me other questions if you think that's neccessary.
     
-    If a question is already been asked before, do not ask it again.
-    If no more useful information is obtained from user, then generate a general scene description.
-    If user do not explicitly answer the question, you can ask the question again or choose to ask another question.
-    
+    The question you asked should not bear any resemblance or repetition to previously asked questions, otherwise I will be very angry!
+    If a similar question is already been asked before, do not ask it again (This is very important!!!).
+    If I clearly state that I don't have any preference for a specific question, you should skip that question.
+    My answer to your question might not be a full sentence, you need to accept that.
+    Always remember! You should only ask one question at a time!
+        
     If you think you have enough information, you can start to generate the prompt.
     
     Here are some requirements for your output:
@@ -107,7 +111,7 @@ if __name__ == "__main__":
             bot_message = get_response(messages)
             chat_history.append((message, bot_message))
             return "", chat_history
-        
+
         msg.submit(respond, [msg, chatbot], [msg, chatbot])
         
     demo.launch()
