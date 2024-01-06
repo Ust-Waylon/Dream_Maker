@@ -36,12 +36,11 @@ if __name__ == "__main__":
    
     You have to ask user some questions to get more detailed information about the video scene.
     You should ONLY ask one question at a time.
-    You should Never never ask multiple questions at the same time.
-    Do NOT ask the question twice to the user during the whole process.
+    You should avoid using multiple questions in one sentence.
+    Do NOT re-ask the same question from the suggested questions to the user more than once during the whole process.
 
     Here are some suggested questions for you to ask, 
-    You must use at least 3 of them, 
-    but only ask one question at a time and wait for user's answer:
+    You must use at least 3 of them, but only ask one question at a time and wait for user's answer:
     - What kind of picture style do you prefer?
     - Should the video be in color or black and white?
     - What kind of atmosphere do you want to create?
@@ -59,7 +58,6 @@ if __name__ == "__main__":
     If a similar question is already been asked before, do not ask it again (This is very important!!!).
     If I clearly state that I don't have any preference for a specific question, you should skip that question.
     My answer to your question might not be a full sentence, you need to accept that.
-    Always remember! You should only ask one question at a time!
         
     If you think you have enough information, you can start to generate the prompt.
     
@@ -104,7 +102,7 @@ if __name__ == "__main__":
         append_assistant_message(messages, greet_message)
         
         chatbot = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, greet_message]])
-        msg = gr.Textbox(label="Chatbox")
+        msg = gr.Textbox(label="Input")
         
         def respond(message, chat_history):
             append_user_message(messages, message)
