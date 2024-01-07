@@ -99,9 +99,15 @@ if __name__ == "__main__":
         Hi, this is Dream-maker.
         Tell me anything, and I will turn your dream into an amazing video.
         """
+
+        music_greet_message = """
+        Your video will be generated soon. Now tell me about your music preferences.
+        How would you like your music? You can describe the style, mood, instruments, tempo, etc.
+        """
+
         append_assistant_message(messages, greet_message)
         
-        chatbot = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, greet_message]])
+        chatbot_1 = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, greet_message]])
         msg = gr.Textbox(label="Input")
         
         def respond(message, chat_history):
@@ -110,7 +116,17 @@ if __name__ == "__main__":
             chat_history.append((message, bot_message))
             return "", chat_history
 
-        msg.submit(respond, [msg, chatbot], [msg, chatbot])
+        def change_mode():
+            chatbot_1.visible = False
         
+        msg.submit(respond, [msg, chatbot_1], [msg, chatbot_1])
+        btn = gr.Button(value = "Generate Video")
+        btn.click(change_mode)
+        gr.Markdown(
+        """
+        ## Generated video
+        """
+        )
+        gr.Video()
     demo.launch()
     
