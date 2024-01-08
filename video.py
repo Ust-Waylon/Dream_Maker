@@ -51,7 +51,6 @@ if __name__ == "__main__":
     - the background of the scene
 
     For each question, you can try to propose a few answers for me to choose from, like this:
-        What kind of picture style do you prefer? like realistic, cartoon, or any other?
         How would you describe the desired color palette for the video? like warm, cold, or any other?
     You can also ask me other questions if you think that's neccessary.
     
