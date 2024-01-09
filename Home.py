@@ -1,7 +1,8 @@
 import openai
 import gradio as gr
 import time
-from prompt import video_system_content, music_system_content
+import re
+from prompt import video_system_content, music_system_content, video_greet_message, music_greet_message
 
 from animatediff_pipeline import AnimateDiffPipeline # comment this line for frontend testing
 
@@ -9,6 +10,10 @@ def init_messages(system_content):
     return [
         {"role": "system", "content": system_content}
     ]
+
+def reset_messages(messages, system_content):
+    messages.clear()
+    messages.append({"role": "system", "content": system_content})
 
 def append_assistant_message(messages, assistant_content):
     messages.append({"role": "assistant", "content": assistant_content})
@@ -36,29 +41,18 @@ def respond(message, chat_history):
     chat_history.append((message, bot_message))
     return "", chat_history
 
-def change_to_video(chatbot):
-    print("change to video")
-    print(chatbot[-1][-1])
-    music_greet_message = """
-        Your video is now generating! Now let's talks about the background music! 
-        How would you like your music? You can describe the style, mood, instruments, tempo, etc.
-        """
-    return gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message]])
-    # print(msg)
+def change_to_music(chatbot):
+    print("change to music chatbot")
+    video_prompt = re.findall(r'\[(.*?)\]', chatbot[-1][-1])
+    reset_messages(messages, music_system_content(video_prompt))
+    print("messages: ", messages)
+    return gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message(video_prompt)]])
 
 
 if __name__ == "__main__":
 
-    # for frontend testing, set use_animatediff to False
-    use_animatediff = True
 
-    W = 512
-    H = 384
-    L = 16
-    num_samples = 5
-    
-    if use_animatediff:
-        animatediff_pipeline = AnimateDiffPipeline()
+    animatediff_pipeline = AnimateDiffPipeline()
     
     # build an interface using gradio
     with gr.Blocks() as demo:
@@ -85,7 +79,7 @@ if __name__ == "__main__":
 
         # Click to generate video and switch to music chatbot
         btn = gr.Button(value = "Generate and move to the next stage")
-        btn.click(change_to_video, inputs = chatbot, outputs = chatbot)
+        btn.click(change_to_music, inputs = chatbot, outputs = chatbot)
         
         gr.Markdown(
         """
@@ -98,14 +92,25 @@ if __name__ == "__main__":
 
         with gr.Row():
             with gr.Column():
-                gr.Dropdown(label="Select a video", choices=video_id_list, interactive=True)
+                show_video_id = gr.Dropdown(label="Select a video", choices=video_id_list, interactive=True)
                 generated_video = gr.Video(label="Generated video")
             with gr.Column():
-                gr.Dropdown(label="Select a music", choices=music_id_list, interactive=True)
+                show_music_id = gr.Dropdown(label="Select a music", choices=music_id_list, interactive=True)
                 generated_music = gr.Audio(label="Generated music")
 
-        if use_animatediff:
-            btn.click(fn = animatediff_pipeline.generate_video_for_app, inputs = [chatbot], outputs = generated_video)
+        btn.click(fn = animatediff_pipeline.generate_video_for_app, inputs = [chatbot], outputs = generated_video)
+        show_video_id.change(fn = animatediff_pipeline.switch_show_video, inputs = show_video_id, outputs = generated_video)
+                
+        gr.Markdown(
+            """
+            ## Get the final output
+            """
+        )
+        with gr.Row():
+            seleted_video_id = gr.CheckboxGroup(video_id_list, label="Select videos for final output")
+            seleted_music_id = gr.CheckboxGroup(music_id_list, label="Select music for final output")
+        btn_merge = gr.Button(value = "Merge generated video and music")
+        gr.Video(label="Merged output")
         
     demo.launch()
     

@@ -78,6 +78,9 @@ class AnimateDiffPipeline:
             filter_params       = self.model_config.filter_params,
         )
 
+        self.savedir = ""
+        self.save_prompt = ""
+
         self.negative_prompt = "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, disconnected limbs, mutation, mutated, ugly, disgusting, amputation"
 
     def generate_video(self, prompt, n_prompt, num_samples):
@@ -89,6 +92,9 @@ class AnimateDiffPipeline:
 
         print(f"sampling {prompt} ...")
         save_prompt = "-".join((prompt.replace("/", "").split(" ")[:10]))
+
+        self.savedir = savedir
+        self.save_prompt = save_prompt
 
         for sample_idx in range(num_samples):
             sample = self.pipeline(
@@ -119,6 +125,10 @@ class AnimateDiffPipeline:
         num_samples = 5
         savedir, save_prompt = self.generate_video(prompt, n_prompt, num_samples)
         return gr.Video.update(value=f"{savedir}/0-{save_prompt}.mp4")
+    
+    def switch_show_video(self, show_video_id):
+        print("switch showing video: ", show_video_id)
+        return gr.Video.update(value=f"{self.savedir}/{show_video_id-1}-{self.save_prompt}.mp4")
         
 
 if __name__ == "__main__":

@@ -10,20 +10,22 @@ video_system_content = """
     Do NOT re-ask the same question from the suggested questions to the user more than once during the whole process.
 
     You can ask me questions about the following aspects:
+    - the main character of the video (can skip this if user starts with a description of the main character)
+    - more details about the main character
     - the picture style of the video
     - the color palette of the video
     - the atmosphere of the video
     - the camera angle of the video
     - the lighting condition of the video
     - the weather condition of the video
-    - the main character of the video
     - the motion of the main character of the video
-    - more details about the main character
     - the background of the scene
+    You are supposed to ask questions generally following the order above (not striclly).
+    Not all of the above aspects are necessary. You can skip some of them if you think they are not important.
 
     For each question, you can try to propose a few answers for me to choose from, like this:
         How would you describe the desired color palette for the video? like warm, cold, or any other?
-    You can also ask me other questions if you think that's neccessary.
+    You can also ask me questions about other aspects if you think that's neccessary.
     
     The question you asked should not bear any resemblance or repetition to previously asked questions, otherwise I will be very angry!
     If a similar question is already been asked before, do not ask it again (This is very important!!!).
@@ -54,7 +56,20 @@ video_system_content = """
         input: "A scene of a coastline, where the wave flapped the reef and stirred layers of spoondrift."
         output: "photo of coastline, rocks, storm weather, wind, waves, lightning"
     }
+"""
+
+video_greet_message = """
+    Hi, this is Dream-maker.
+    Tell me anything, and I will turn your dream into an amazing video.
+"""
+
+def music_greet_message(video_prompt):
+    return f"""
+        Your video prompt is set to be: {video_prompt} and your video is now generating! 
+        Now let's talk about the background music!
+        How would you like your music? You can describe the style, mood, instruments, tempo, etc.
     """
+
 def music_system_content(video_prompt):
     return f"""
     Now you are acting as a translator to translate a natural language description into a prompt for a text-to-music generation model (like stable-diffusion). 
