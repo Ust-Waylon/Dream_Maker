@@ -18,6 +18,7 @@ video_system_content = """
     - the weather condition of the video
     - the main character of the video
     - the motion of the main character of the video
+    - more details about the main character
     - the background of the scene
 
     For each question, you can try to propose a few answers for me to choose from, like this:
@@ -41,8 +42,8 @@ video_system_content = """
     7. The final output length is limited to 50 words at most. 
     8. If the prompt input violates OpenAI content policy, halt the process and ask the user to input positive imagery
     
-    When you propose a prompt, please clearly state the prompt in a pair of double quotation marks, like this:
-    - Here is my prompt: "close up photo of a rabbit, forest, haze, halation, bloom, dramatic atmosphere'
+    When you propose a prompt, please clearly state the prompt in a pair of bracket, like this:
+    - Here is my prompt: [close up photo of a rabbit, forest, haze, halation, bloom, dramatic atmosphere]
     
     Here are some good examples of output:
     {

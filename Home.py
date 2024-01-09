@@ -2,6 +2,9 @@ import openai
 import gradio as gr
 import time
 from prompt import video_system_content, music_system_content
+
+from animatediff_pipeline import AnimateDiffPipeline
+
 def init_messages(system_content):
     return [
         {"role": "system", "content": system_content}
@@ -33,16 +36,26 @@ def respond(message, chat_history):
     chat_history.append((message, bot_message))
     return "", chat_history
 
-def change_to_video(msg, chatbot_1):
+def change_to_music(msg_1, chatbot_1):
     print("change to video")
-    # print(msg)
+    print(msg_1)
     print(chatbot_1)
-    print(chatbot_1[-1][-1])
-    
-    # print(msg)
+    chatbot_1.visible = False
+    msg_1.visible = False
 
 
 if __name__ == "__main__":
+
+    # for frontend testing, set use_animatediff to False
+    use_animatediff = False
+
+    W = 512
+    H = 384
+    L = 16
+    num_samples = 5
+    
+    if use_animatediff:
+        animatediff_pipeline = AnimateDiffPipeline()
     
     # build an interface using gradio
     with gr.Blocks() as demo:
@@ -54,37 +67,52 @@ if __name__ == "__main__":
         Type to chat with our chatbot.
         """)
         
-        greet_message = """
+        video_greet_message = """
         Hi, this is Dream-maker.
         Tell me anything, and I will turn your dream into an amazing video.
         """
 
         music_greet_message = """
-        Your video will be generated soon. Now tell me about your music preferences.
+        Your video is now generating! Now let's talks about the background music!
         How would you like your music? You can describe the style, mood, instruments, tempo, etc.
         """
 
-        append_assistant_message(messages, greet_message)
+        append_assistant_message(messages, video_greet_message)
         
-        chatbot_1 = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, greet_message]])
+        # chatbot for video
+        chatbot_1 = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, video_greet_message]])
         msg_1 = gr.Textbox(label="Input")
         
         msg_1.submit(respond, [msg_1, chatbot_1], [msg_1, chatbot_1])
+
+        # generate video
         btn = gr.Button(value = "Generate Video")
-        btn.click(change_to_video, inputs = chatbot_1)
-        gr.Markdown(
-        """
-        ## Generated video
-        """
-        )
-        with gr.Row():
-            gr.Video()
-            gr.Video()
-        
+
+        # chatbot for music
         chatbot_2 = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message]], render = False)
         msg_2 = gr.Textbox(label="Input", render = False)
         
         msg_2.submit(respond, [msg_2, chatbot_2], [msg_2, chatbot_2])
+
+        gr.Markdown(
+        """
+        ## Generated video and background music
+        """
+        )
+
+        video_id_list = [1,2,3,4,5,6,7,8,9,10]
+        music_id_list = [1,2,3,4,5]
+
+        with gr.Row():
+            with gr.Column():
+                generated_video = gr.Video(label="Generated video")
+                gr.Dropdown(label="Select a video", choices=video_id_list, interactive=True)
+            with gr.Column():
+                generated_music = gr.Audio(label="Generated music")
+                gr.Dropdown(label="Select a music", choices=music_id_list, interactive=True)
+
+        if use_animatediff:
+            btn.click(fn = animatediff_pipeline.generate_video_for_app, inputs = [chatbot_1], outputs = generated_video)
         
     demo.launch()
     
