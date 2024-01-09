@@ -3,7 +3,7 @@ import gradio as gr
 import time
 from prompt import video_system_content, music_system_content
 
-from animatediff_pipeline import AnimateDiffPipeline
+from animatediff_pipeline import AnimateDiffPipeline # comment this line for frontend testing
 
 def init_messages(system_content):
     return [
