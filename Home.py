@@ -36,12 +36,15 @@ def respond(message, chat_history):
     chat_history.append((message, bot_message))
     return "", chat_history
 
-def change_to_music(msg_1, chatbot_1):
+def change_to_video(chatbot):
     print("change to video")
-    print(msg_1)
-    print(chatbot_1)
-    chatbot_1.visible = False
-    msg_1.visible = False
+    print(chatbot[-1][-1])
+    music_greet_message = """
+        Your video will be generated soon. Now tell me about your music preferences.
+        How would you like your music? You can describe the style, mood, instruments, tempo, etc.
+        """
+    return gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message]])
+    # print(msg)
 
 
 if __name__ == "__main__":
@@ -79,21 +82,15 @@ if __name__ == "__main__":
 
         append_assistant_message(messages, video_greet_message)
         
-        # chatbot for video
-        chatbot_1 = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, video_greet_message]])
-        msg_1 = gr.Textbox(label="Input")
+        # Chatbot for video
+        chatbot = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, greet_message]])
+        msg = gr.Textbox(label="Input")
         
-        msg_1.submit(respond, [msg_1, chatbot_1], [msg_1, chatbot_1])
-
-        # generate video
+        msg.submit(respond, [msg, chatbot], [msg, chatbot])
+        # Click to generate video and switch to music chatbot
         btn = gr.Button(value = "Generate Video")
 
-        # chatbot for music
-        chatbot_2 = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message]], render = False)
-        msg_2 = gr.Textbox(label="Input", render = False)
-        
-        msg_2.submit(respond, [msg_2, chatbot_2], [msg_2, chatbot_2])
-
+        btn.click(change_to_video, inputs = chatbot, outputs = chatbot)
         gr.Markdown(
         """
         ## Generated video and background music
