@@ -1,3 +1,5 @@
 test_animatediff_pipeline.sh
+
 AnimateDiff/
 outputs/
+__pycache__/
