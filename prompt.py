@@ -76,6 +76,7 @@ def music_system_content(video_prompt):
 
     You can also ask me other questions if you think that's neccessary.
     If I clearly state that I don't have any preference for a specific question, you can decide the answer by yourself based on the video content.
+    But don't say that some aspects "is up to the model choice" in the final prompt.
     Please remember! You should only ask one question at a time.
     
     If you think you have enough information, you can start to generate the prompt.

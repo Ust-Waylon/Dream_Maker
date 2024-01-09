@@ -40,7 +40,7 @@ def change_to_video(chatbot):
     print("change to video")
     print(chatbot[-1][-1])
     music_greet_message = """
-        Your video will be generated soon. Now tell me about your music preferences.
+        Your video is now generating! Now let's talks about the background music! 
         How would you like your music? You can describe the style, mood, instruments, tempo, etc.
         """
     return gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message]])
@@ -50,7 +50,7 @@ def change_to_video(chatbot):
 if __name__ == "__main__":
 
     # for frontend testing, set use_animatediff to False
-    use_animatediff = False
+    use_animatediff = True
 
     W = 512
     H = 384
@@ -75,41 +75,37 @@ if __name__ == "__main__":
         Tell me anything, and I will turn your dream into an amazing video.
         """
 
-        music_greet_message = """
-        Your video is now generating! Now let's talks about the background music!
-        How would you like your music? You can describe the style, mood, instruments, tempo, etc.
-        """
-
         append_assistant_message(messages, video_greet_message)
         
         # Chatbot for video
-        chatbot = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, greet_message]])
+        chatbot = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, video_greet_message]])
         msg = gr.Textbox(label="Input")
         
         msg.submit(respond, [msg, chatbot], [msg, chatbot])
-        # Click to generate video and switch to music chatbot
-        btn = gr.Button(value = "Generate Video")
 
+        # Click to generate video and switch to music chatbot
+        btn = gr.Button(value = "Generate and move to the next stage")
         btn.click(change_to_video, inputs = chatbot, outputs = chatbot)
+        
         gr.Markdown(
         """
         ## Generated video and background music
         """
         )
 
-        video_id_list = [1,2,3,4,5,6,7,8,9,10]
+        video_id_list = [1,2,3,4,5]
         music_id_list = [1,2,3,4,5]
 
         with gr.Row():
             with gr.Column():
-                generated_video = gr.Video(label="Generated video")
                 gr.Dropdown(label="Select a video", choices=video_id_list, interactive=True)
+                generated_video = gr.Video(label="Generated video")
             with gr.Column():
-                generated_music = gr.Audio(label="Generated music")
                 gr.Dropdown(label="Select a music", choices=music_id_list, interactive=True)
+                generated_music = gr.Audio(label="Generated music")
 
         if use_animatediff:
-            btn.click(fn = animatediff_pipeline.generate_video_for_app, inputs = [chatbot_1], outputs = generated_video)
+            btn.click(fn = animatediff_pipeline.generate_video_for_app, inputs = [chatbot], outputs = generated_video)
         
     demo.launch()
     
