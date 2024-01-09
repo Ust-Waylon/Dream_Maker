@@ -54,6 +54,17 @@ video_system_content = """
         input: "A scene of a coastline, where the wave flapped the reef and stirred layers of spoondrift."
         output: "photo of coastline, rocks, storm weather, wind, waves, lightning"
     }
+"""
+
+video_greet_message = """
+    Hi, this is Dream-maker.
+    Tell me anything, and I will turn your dream into an amazing video.
+"""
+
+def music_greet_message(video_prompt):
+    return f"""
+        Your video prompt is set to be: {video_prompt} and your video is now generating! Now let's talk about the background music!
+        How would you like your music? You can describe the style, mood, instruments, tempo, etc.
     """
 def music_system_content(video_prompt):
     return f"""
