@@ -1,4 +1,5 @@
 test_animatediff_pipeline.sh
+test_home.sh
 
 AnimateDiff/
 outputs/

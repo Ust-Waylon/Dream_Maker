@@ -60,7 +60,7 @@ if __name__ == "__main__":
         
         gr.Markdown(
         """
-        # Dream-maker Demo for Video-generation
+        # Dream-maker Demo
         Type to chat with our chatbot.
         """)
         
@@ -112,5 +112,5 @@ if __name__ == "__main__":
         btn_merge = gr.Button(value = "Merge generated video and music")
         gr.Video(label="Merged output")
         
-    demo.launch()
+    demo.launch(share=True)
     

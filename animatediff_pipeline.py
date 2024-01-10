@@ -33,8 +33,14 @@ class AnimateDiffPipeline:
         self.inference_config = "AnimateDiff/configs/inference/inference-v2.yaml"
         self.config = "AnimateDiff/configs/prompts/RealisticVision_v2.yaml"
 
+        # 4：3
         self.W = 512
         self.H = 384
+
+        # 16：9
+        # self.W = 1024
+        # self.H = 576
+        
         self.L = 16
 
         self.model_config  = OmegaConf.load(self.config)
