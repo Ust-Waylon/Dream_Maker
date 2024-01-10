@@ -7,7 +7,8 @@ pip install gradio
 ```
 ### Run the code
 ```bash
-python communication.py
+python video.py
+python music.py
 ```
 Then you can play with the interface on the browser by clicking the link in the terminal.
 ```
