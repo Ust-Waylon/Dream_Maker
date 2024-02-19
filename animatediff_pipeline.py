@@ -1,4 +1,5 @@
 import argparse
+import time
 import datetime
 import inspect
 import os
@@ -42,6 +43,8 @@ class AnimateDiffPipeline:
         # self.H = 576
         
         self.L = 16
+
+        self.num_samples = 10
 
         self.model_config  = OmegaConf.load(self.config)
 
@@ -124,17 +127,34 @@ class AnimateDiffPipeline:
 
         return savedir, save_prompt
     
-    def generate_video_for_app(self, chatbot):
-        prompt = re.findall(r'\[(.*?)\]', chatbot[-1][-1])[0]
-        print("prompt: ", prompt)
+    def generate_video_for_app(self, textbox, progress = gr.Progress()):
+        prompt = textbox
+        print("video prompt: ", prompt)
         n_prompt = self.negative_prompt
-        num_samples = 5
+        num_samples = self.num_samples
         savedir, save_prompt = self.generate_video(prompt, n_prompt, num_samples)
-        return gr.Video.update(value=f"{savedir}/0-{save_prompt}.mp4")
     
     def switch_show_video(self, show_video_id):
         print("switch showing video: ", show_video_id)
-        return gr.Video.update(value=f"{self.savedir}/{show_video_id-1}-{self.save_prompt}.mp4")
+        return gr.Video(abel="Generated video", value=f"{self.savedir}/{show_video_id-1}-{self.save_prompt}.mp4", visible=True)
+    
+    def check_generation_progress(self):
+        for i in range(self.num_samples):
+            if not os.path.exists(f"{self.savedir}/{i}-{self.save_prompt}.mp4"):
+                break
+        return i
+    
+    def track_generation_progress(self, progress=gr.Progress()):
+        # track generation progress
+        i = 0
+        progress_step = 1 / self.num_samples
+        progress(0, f"generating the 1st sample")
+        while self.check_generation_progress() < self.num_samples - 1:
+            i = self.check_generation_progress()
+            progress(progress_step * i, f"generating the {i + 1}th sample")
+            time.sleep(1)
+        return gr.Video(label="Generated video", value=f"{self.savedir}/0-{self.save_prompt}.mp4", visible=True)
+        
         
 
 if __name__ == "__main__":
