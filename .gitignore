@@ -2,6 +2,5 @@ test_animatediff_pipeline.sh
 test_home.sh
 test_gradio.py
 
-AnimateDiff/
 outputs/
 __pycache__/
