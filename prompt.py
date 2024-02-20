@@ -65,7 +65,7 @@ video_greet_message = """
 
 def music_greet_message(video_prompt):
     return f"""
-        Your video prompt is set to be: {video_prompt} and your video is now generating! 
+        Your video prompt is set to be: [{video_prompt}] and your video is now generating! 
         Now let's talk about the background music!
         How would you like your music? You can describe the style, mood, instruments, tempo, etc.
     """

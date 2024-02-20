@@ -136,7 +136,7 @@ class AnimateDiffPipeline:
     
     def switch_show_video(self, show_video_id):
         print("switch showing video: ", show_video_id)
-        return gr.Video(abel="Generated video", value=f"{self.savedir}/{show_video_id-1}-{self.save_prompt}.mp4", visible=True)
+        return gr.Video(label="Generated video", value=f"{self.savedir}/{show_video_id-1}-{self.save_prompt}.mp4", visible=True)
     
     def check_generation_progress(self):
         for i in range(self.num_samples):

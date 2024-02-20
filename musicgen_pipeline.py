@@ -20,7 +20,7 @@ class MusicGenPipeline:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
         if not os.path.exists("outputs"):
             os.makedirs("outputs")
-        savedir = f"outputs/AnimateDiff_{timestamp}"
+        savedir = f"outputs/MusicGen_{timestamp}"
         os.makedirs(savedir)
 
         # add timestamp and prompt to prompt.txt

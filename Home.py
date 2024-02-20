@@ -106,10 +106,10 @@ if __name__ == "__main__":
 
         with gr.Row():
             with gr.Column():
-                video_prompt_textbox = gr.Textbox(label="video prompt")
+                video_prompt_textbox = gr.Textbox(label="video prompt", lines=2, max_lines=2)
                 generate_video_btn = gr.Button(value = "Generate video", visible=False)
             with gr.Column():
-                music_prompt_textbox = gr.Textbox(label="music prompt")
+                music_prompt_textbox = gr.Textbox(label="music prompt", lines=2, max_lines=2)
                 generate_music_btn = gr.Button(value = "Generate music", visible=False)
 
         export_prompt_btn.click(cm.export_prompt, inputs = [chatbot], 
@@ -127,11 +127,13 @@ if __name__ == "__main__":
 
         with gr.Row():
             with gr.Column():
-                show_video_id = gr.Dropdown(label="Select a video", choices=video_id_list, interactive=True)
-                generated_video = gr.Video(label="Generated video", value=None, visible=True)
+                show_video_id = gr.Dropdown(label="Select a video", value=1, choices=video_id_list, interactive=True)
             with gr.Column():
-                show_music_id = gr.Dropdown(label="Select a music", choices=music_id_list, interactive=True)
-                generated_music = gr.Audio(label="Generated music", value=None, visible=True)
+                show_music_id = gr.Dropdown(label="Select a music", value=1, choices=music_id_list, interactive=True)
+
+        with gr.Row(equal_height=True):
+            generated_video = gr.Video(label="Generated video", value=None, visible=True)
+            generated_music = gr.Audio(label="Generated music", value=None, visible=True)
 
         generate_video_btn.click(fn = cm.animatediff_pipeline.generate_video_for_app, inputs = video_prompt_textbox)
         generate_video_btn.click(cm.animatediff_pipeline.track_generation_progress, outputs = generated_video)
@@ -148,10 +150,10 @@ if __name__ == "__main__":
         )
         with gr.Row():
             seleted_video_id = gr.CheckboxGroup(video_id_list, label="Select videos for final output")
-            seleted_music_id = gr.CheckboxGroup(music_id_list, label="Select music for final output")
+            seleted_music_id = gr.Radio(music_id_list, label="Select music for final output")
         btn_merge = gr.Button(value = "Merge generated video and music")
         gr.Video(label="Merged output", visible=False)
         
-    demo.queue(concurrency_count=3)
+    demo.queue(concurrency_count=4)
     demo.launch()
     
