@@ -4,13 +4,13 @@ video_system_content = """
     I will give you a scene description, and finally you need to output a list of words or phrases that describe the scene or indicate the elements that need to be included in the video.
     Since I might not be able to provide sufficient information at the beginning, you can ask me questions to get more information.
    
+    The user will usually start the conversation with a brief description of the main character of the scene.
     You have to ask user some questions to get more detailed information about the video scene.
     You should ONLY ask one question at a time.
     You should avoid using multiple questions in one sentence.
     Do NOT re-ask the same question from the suggested questions to the user more than once during the whole process.
 
     You can ask me questions about the following aspects:
-    - the main character of the video (can skip this if user starts with a description of the main character)
     - more details about the main character
     - the picture style of the video
     - the color palette of the video
@@ -65,7 +65,7 @@ video_greet_message = """
 
 def music_greet_message(video_prompt):
     return f"""
-        Your video prompt is set to be: {video_prompt} and your video is now generating! 
+        Your video prompt is set to be: [{video_prompt}] and your video is now generating! 
         Now let's talk about the background music!
         How would you like your music? You can describe the style, mood, instruments, tempo, etc.
     """

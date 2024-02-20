@@ -1,4 +1,5 @@
 import argparse
+import time
 import datetime
 import inspect
 import os
@@ -33,9 +34,17 @@ class AnimateDiffPipeline:
         self.inference_config = "AnimateDiff/configs/inference/inference-v2.yaml"
         self.config = "AnimateDiff/configs/prompts/RealisticVision_v2.yaml"
 
+        # 4：3
         self.W = 512
         self.H = 384
+
+        # 16：9
+        # self.W = 1024
+        # self.H = 576
+        
         self.L = 16
+
+        self.num_samples = 10
 
         self.model_config  = OmegaConf.load(self.config)
 
@@ -81,7 +90,8 @@ class AnimateDiffPipeline:
         self.savedir = ""
         self.save_prompt = ""
 
-        self.negative_prompt = "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, disconnected limbs, mutation, mutated, ugly, disgusting, amputation"
+        self.general_positive_prompt = "best quality, masterpiece, extremely detailed, highres, 8k"
+        self.negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), (deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, disconnected limbs, mutation, mutated, ugly, disgusting, amputation"
 
     def generate_video(self, prompt, n_prompt, num_samples):
         time_str = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
@@ -90,7 +100,8 @@ class AnimateDiffPipeline:
         savedir = f"outputs/AnimateDiff_{time_str}"
         os.makedirs(savedir)
 
-        print(f"sampling {prompt} ...")
+        prompt = f"{prompt}, {self.general_positive_prompt}"
+        print(f"sampling {prompt}")
         save_prompt = "-".join((prompt.replace("/", "").split(" ")[:10]))
 
         self.savedir = savedir
@@ -118,17 +129,34 @@ class AnimateDiffPipeline:
 
         return savedir, save_prompt
     
-    def generate_video_for_app(self, chatbot):
-        prompt = re.findall(r'\[(.*?)\]', chatbot[-1][-1])[0]
-        print("prompt: ", prompt)
+    def generate_video_for_app(self, textbox, progress = gr.Progress()):
+        prompt = textbox
+        print("video prompt: ", prompt)
         n_prompt = self.negative_prompt
-        num_samples = 5
+        num_samples = self.num_samples
         savedir, save_prompt = self.generate_video(prompt, n_prompt, num_samples)
-        return gr.Video.update(value=f"{savedir}/0-{save_prompt}.mp4")
     
     def switch_show_video(self, show_video_id):
         print("switch showing video: ", show_video_id)
-        return gr.Video.update(value=f"{self.savedir}/{show_video_id-1}-{self.save_prompt}.mp4")
+        return gr.Video(label="Generated video", value=f"{self.savedir}/{show_video_id-1}-{self.save_prompt}.mp4", visible=True)
+    
+    def check_generation_progress(self):
+        for i in range(self.num_samples):
+            if not os.path.exists(f"{self.savedir}/{i}-{self.save_prompt}.mp4"):
+                break
+        return i
+    
+    def track_generation_progress(self, progress=gr.Progress()):
+        # track generation progress
+        i = 0
+        progress_step = 1 / self.num_samples
+        progress(0, f"generating the 1st sample")
+        while self.check_generation_progress() < self.num_samples - 1:
+            i = self.check_generation_progress()
+            progress(progress_step * i, f"generating the {i + 1}th sample")
+            time.sleep(1)
+        return gr.Video(label="Generated video", value=f"{self.savedir}/0-{self.save_prompt}.mp4", visible=True)
+        
         
 
 if __name__ == "__main__":
