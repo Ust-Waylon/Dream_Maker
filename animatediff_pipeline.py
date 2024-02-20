@@ -90,7 +90,8 @@ class AnimateDiffPipeline:
         self.savedir = ""
         self.save_prompt = ""
 
-        self.negative_prompt = "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, disconnected limbs, mutation, mutated, ugly, disgusting, amputation"
+        self.general_positive_prompt = "best quality, masterpiece, extremely detailed, highres, 8k"
+        self.negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), (deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, disconnected limbs, mutation, mutated, ugly, disgusting, amputation"
 
     def generate_video(self, prompt, n_prompt, num_samples):
         time_str = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
@@ -99,7 +100,8 @@ class AnimateDiffPipeline:
         savedir = f"outputs/AnimateDiff_{time_str}"
         os.makedirs(savedir)
 
-        print(f"sampling {prompt} ...")
+        prompt = f"{prompt}, {self.general_positive_prompt}"
+        print(f"sampling {prompt}")
         save_prompt = "-".join((prompt.replace("/", "").split(" ")[:10]))
 
         self.savedir = savedir
