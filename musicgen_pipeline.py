@@ -6,8 +6,8 @@ import gradio as gr
 
 class MusicGenPipeline:
     def __init__(self):
-        self.musicgen_path = "/data1/wtanae/audiocraft/dream_maker"
-        self.output_dir = "/data1/wtanae/communication_module/outputs"
+        self.musicgen_path = "/project/t3_wtanae/audiocraft/dream_maker"
+        self.output_dir = "outputs"
 
         self.savedir = ""
         self.save_prompt = ""

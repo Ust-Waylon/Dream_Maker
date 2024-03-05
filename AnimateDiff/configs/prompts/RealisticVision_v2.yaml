@@ -1,10 +1,10 @@
 inference_config: "configs/inference/inference-v2.yaml"
 motion_module:
   # - "models/Motion_Module/mm_sd_v15_v2.ckpt"
-  - "/data1/wtanae/AnimateDiff/models/Motion_Module/mm_sd_v15_v2.ckpt"
+  - "/project/t3_wtanae/AnimateDiff/models/Motion_Module/mm_sd_v15_v2.ckpt"
 
 # dreambooth_path: "models/DreamBooth_LoRA/realisticVisionV20_v20.safetensors"
-dreambooth_path: "/data1/wtanae/AnimateDiff/models/DreamBooth_LoRA/realisticVisionV51_v20Novae.safetensors"
+dreambooth_path: "/project/t3_wtanae/AnimateDiff/models/DreamBooth_LoRA/realisticVisionV51_v20Novae.safetensors"
 lora_model_path: ""
 
 # seed:           [9620, 913, 6840, 1334]

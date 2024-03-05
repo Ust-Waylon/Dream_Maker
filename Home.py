@@ -154,6 +154,6 @@ if __name__ == "__main__":
         btn_merge = gr.Button(value = "Merge generated video and music")
         gr.Video(label="Merged output", visible=False)
         
-    demo.queue(concurrency_count=4)
-    demo.launch()
+    demo.queue()
+    demo.launch(max_threads=4)
     
