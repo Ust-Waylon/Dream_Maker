@@ -1,7 +1,7 @@
 import time
 import torchaudio
 import os
-from audiocraft.models import MusicGen
+from audiocraft.models import MAGNeT
 from audiocraft.data.audio import audio_write
 
 output_dir = "/project/t3_wtanae/communication_module/outputs"
@@ -10,11 +10,11 @@ if __name__ == "__main__":
 
     num_samples = 5
 
-    print("start loading MusicGen")
-    model = MusicGen.get_pretrained('facebook/musicgen-large')
-    model.set_generation_params(duration=11)  # generate 11 seconds.
-    wav = model.generate_unconditional(4)    # generates 4 unconditional audio samples
-    print("MusicGen loaded")
+    print("start loading MAGNeT")
+    model = MAGNeT.get_pretrained('facebook/magnet-medium-10secs')
+    # model.set_generation_params(duration=11)  # generate 11 second
+    # wav = model.generate_unconditional(4)    # generates 4 unconditional audio samples
+    print("MAGNeT loaded")
 
     while True:
         with open('status.txt', 'r') as file:

@@ -30,7 +30,7 @@ from diffusers.training_utils import set_seed
 
 class AnimateDiffPipeline:
     def __init__(self):
-        self.pretrained_model_path = "/data1/wtanae/AnimateDiff/models/StableDiffusion/stable-diffusion-v1-5"
+        self.pretrained_model_path = "/project/t3_wtanae/AnimateDiff/models/StableDiffusion/stable-diffusion-v1-5"
         self.inference_config = "AnimateDiff/configs/inference/inference-v2.yaml"
         self.config = "AnimateDiff/configs/prompts/RealisticVision_v2.yaml"
 
@@ -91,7 +91,7 @@ class AnimateDiffPipeline:
         self.save_prompt = ""
 
         self.general_positive_prompt = "best quality, masterpiece, extremely detailed, highres, 8k"
-        self.negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), (deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, disconnected limbs, mutation, mutated, ugly, disgusting, amputation"
+        self.negative_prompt = "(worst quality:2), (low quality:2), (normal quality:2), (deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, disconnected limbs, mutation, mutated, ugly, disgusting, amputation, naked human body"
 
     def generate_video(self, prompt, n_prompt, num_samples):
         time_str = datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
