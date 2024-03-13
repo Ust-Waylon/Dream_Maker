@@ -5,8 +5,9 @@ import datetime
 import re
 from prompt import video_system_content, music_system_content, video_greet_message, music_greet_message
 
-from animatediff_pipeline import AnimateDiffPipeline # comment this line for frontend testing
-from musicgen_pipeline import MusicGenPipeline # comment this line for frontend testing
+from animatediff_pipeline import AnimateDiffPipeline
+from musicgen_pipeline import MusicGenPipeline
+from postprocess_pipeline import PostprocessPipeline
 
 class communication_module:
     def __init__(self):
@@ -17,6 +18,7 @@ class communication_module:
 
         self.animatediff_pipeline = AnimateDiffPipeline()
         self.musicgen_pipeline = MusicGenPipeline()
+        self.postprocess_pipeline = PostprocessPipeline()
 
     def init_messages(self, system_content):
         self.messages = [{"role": "system", "content": system_content}]
@@ -68,6 +70,13 @@ class communication_module:
         updated_video_button = gr.Button(value="Generate video", visible=video_visible)
         updated_music_button = gr.Button(value="Generate music", visible=music_visible)
         return updated_video_Textbox, updated_music_Textbox, updated_video_button, updated_music_button, gr.Button(value="move to the next stage", visible=True)
+    
+    def postprocess_to_final_output(self, video_id_list, music_id):
+        self.postprocess_pipeline.set_source_path(self.animatediff_pipeline, self.musicgen_pipeline)
+        self.postprocess_pipeline.postprocess_video(video_id_list)
+        self.postprocess_pipeline.postprocess_music(music_id)
+        self.postprocess_pipeline.combine_video_music()
+        return gr.Video(label="Merged output", value=self.postprocess_pipeline.output_path + "final_output.mp4", visible=True)
 
 
 if __name__ == "__main__":
@@ -152,8 +161,10 @@ if __name__ == "__main__":
             seleted_video_id = gr.CheckboxGroup(video_id_list, label="Select videos for final output")
             seleted_music_id = gr.Radio(music_id_list, label="Select music for final output")
         btn_merge = gr.Button(value = "Merge generated video and music")
-        gr.Video(label="Merged output", visible=False)
+        merged_output = gr.Video(label="Merged output", visible=False)
+
+        btn_merge.click(cm.postprocess_to_final_output, inputs = [seleted_video_id, seleted_music_id], outputs = merged_output)
         
     demo.queue()
-    demo.launch(max_threads=4)
+    demo.launch(max_threads=40)
     
