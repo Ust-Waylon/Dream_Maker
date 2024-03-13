@@ -166,5 +166,5 @@ if __name__ == "__main__":
         btn_merge.click(cm.postprocess_to_final_output, inputs = [seleted_video_id, seleted_music_id], outputs = merged_output)
         
     demo.queue()
-    demo.launch(max_threads=4)
+    demo.launch(max_threads=40)
     
