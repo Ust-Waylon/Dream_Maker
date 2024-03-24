@@ -111,8 +111,9 @@ if __name__ == "__main__":
         chatbot_type_instruction = gr.Markdown(
             '''
             ## Video generation model
-            Answer the chatbot's serial question, and it will generate the video prompt for you.
-            The chatbot is a communication model, feel free to propose question or ask for its idea.
+            Answer the chatbot's serial questions, and it will generate the video prompt for you.
+
+            The chatbot is a communication model, feel free to propose questions or ask for its idea.
             '''
         )
         
@@ -135,14 +136,16 @@ if __name__ == "__main__":
         move_to_next_stage_btn = gr.Button(value = "move to the next stage", visible=False)
         move_to_next_stage_btn.click(cm.move_to_next_stage, inputs = [chatbot], outputs = [chatbot])
 
+        gr.Markdown(
+            '''
+            If you are not satisfied with the generated prompt, you could manually change them in the prompt textbox before passing them into the generation model.
+            
+            Click the generate button beneath the prompt box to generate video or music, there will be 10 samples in a batch and it would take some time to finish.
+            '''
+        )
+
         with gr.Row():
-            gr.Markdown(
-                '''
-                If you are not satisfied with the generated prompt, you could manually type them before passing them into the generation model.
-                
-                Click the generate button below to generate videos or music, there will be 10 samples in a batch and it would take some time to finish.
-                '''
-            )
+            
             with gr.Column():
                 video_prompt_textbox = gr.Textbox(label="video prompt", lines=2, max_lines=2)
                 generate_video_btn = gr.Button(value = "Generate video", visible=False)
@@ -162,14 +165,13 @@ if __name__ == "__main__":
 
         video_id_list = [i for i in range(1,cm.animatediff_pipeline.num_samples+1)]
         music_id_list = [i for i in range(1,cm.musicgen_pipeline.num_samples+1)]
-
+        gr.Markdown('''
+            - After finising generating the outputs, they are shown below. You can check the output one-by-one by selecting the dropdown menu above.      
+            - You may select **5** videos and **5** music that suits your expectation the most, by simply checking the below indexes.
+            - You could play them directly or save them into your local machine by right-clicking on them.
+        ''')
         with gr.Row():
-            gr.Markdown('''
-                Below are the generated outcome, you can check the output one-by-one by selecting the above dropdown menu.
-                        
-                You may select 5 videos and 5 music that suits your expectation the most, by simply checking the below indexes.
-            '''
-            )
+            
             with gr.Column():
                 show_video_id = gr.Dropdown(label="Select a video", value=1, choices=video_id_list, interactive=True)
             with gr.Column():
@@ -200,7 +202,11 @@ if __name__ == "__main__":
         merged_output = gr.Video(label="Merged output", visible=False)
 
         btn_merge.click(cm.postprocess_to_final_output, inputs = [seleted_video_id, seleted_music_id], outputs = merged_output)
-        
+        gr.Markdown(
+            '''
+            We value your feedback, click on this link and fill out a questionnarie and share your thoughts with us!
+            '''
+        )
     demo.queue()
     demo.launch(max_threads=40)
     
