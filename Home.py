@@ -61,15 +61,29 @@ class communication_module:
             self.video_prompt = re.findall(r'\[(.*?)\]', chatbot[-1][-1])[0]
             video_visible = True
             music_visible = False
+            chatbot_type_instruction = gr.Markdown(
+                '''
+                ## Music generation model
+                Answer the chatbot's serial question, and it will generate the Music prompt for you.
+                The chatbot is a communication model, feel free to propose question or ask for its idea.
+                '''
+            )
         elif self.stage == "communication about music":
             self.music_prompt = re.findall(r'\[(.*?)\]', chatbot[-1][-1])[0]
             video_visible = True
             music_visible = True
+            chatbot_type_instruction = gr.Markdown(
+                '''
+                ## Music generation model
+                Answer the chatbot's serial question, and it will generate the Music prompt for you.
+                The chatbot is a communication model, feel free to propose question or ask for its idea.
+                '''
+            )
         updated_video_Textbox = gr.Textbox(label="video prompt", value=self.video_prompt)
         updated_music_Textbox = gr.Textbox(label="music prompt", value=self.music_prompt)
         updated_video_button = gr.Button(value="Generate video", visible=video_visible)
         updated_music_button = gr.Button(value="Generate music", visible=music_visible)
-        return updated_video_Textbox, updated_music_Textbox, updated_video_button, updated_music_button, gr.Button(value="move to the next stage", visible=True)
+        return updated_video_Textbox, updated_music_Textbox, updated_video_button, updated_music_button, gr.Button(value="move to the next stage", visible=True), chatbot_type_instruction
     
     def postprocess_to_final_output(self, video_id_list, music_id):
         self.postprocess_pipeline.set_source_path(self.animatediff_pipeline, self.musicgen_pipeline)
@@ -145,12 +159,21 @@ if __name__ == "__main__":
         
         gr.Markdown(
         """
-        # Dream-maker Demo
-        Type to chat with our chatbot.
+        # Dream-maker Demo 
+        Type in to chat with our chatbot.
         """)
+
+        chatbot_type_instruction = gr.Markdown(
+            '''
+            ## Video generation model
+            Answer the chatbot's serial questions, and it will generate the video prompt for you.
+
+            The chatbot is a communication model, feel free to propose questions or ask for its idea.
+            '''
+        )
         
         video_greet_message = """
-        Hi, this is Dream-maker.
+        Hi, I am a Dream-maker.
         Tell me anything, and I will turn your dream into an amazing video.
         """
 
@@ -172,7 +195,16 @@ if __name__ == "__main__":
 
         move_to_next_stage_btn.click(cm.move_to_next_stage, inputs = [chatbot], outputs = [chatbot])
 
+        gr.Markdown(
+            '''
+            If you are not satisfied with the generated prompt, you could manually change them in the prompt textbox before passing them into the generation model.
+            
+            Click the generate button beneath the prompt box to generate video or music, there will be 10 samples in a batch and it would take some time to finish.
+            '''
+        )
+
         with gr.Row():
+            
             with gr.Column():
                 video_prompt_textbox = gr.Textbox(label="video prompt", lines=2, max_lines=2)
                 generate_video_btn = gr.Button(value = "Generate video", visible=False)
@@ -181,7 +213,7 @@ if __name__ == "__main__":
                 generate_music_btn = gr.Button(value = "Generate music", visible=False)
 
         export_prompt_btn.click(cm.export_prompt, inputs = [chatbot], 
-                                outputs = [video_prompt_textbox, music_prompt_textbox, generate_video_btn, generate_music_btn, move_to_next_stage_btn])
+                                outputs = [video_prompt_textbox, music_prompt_textbox, generate_video_btn, generate_music_btn, move_to_next_stage_btn, chatbot_type_instruction])
         
 
         gr.Markdown(
@@ -192,8 +224,13 @@ if __name__ == "__main__":
 
         video_id_list = [i for i in range(1,cm.animatediff_pipeline.num_samples+1)]
         music_id_list = [i for i in range(1,cm.musicgen_pipeline.num_samples+1)]
-
+        gr.Markdown('''
+            - After finising generating the outputs, they are shown below. You can check the output one-by-one by selecting the dropdown menu above.      
+            - You may select **5** videos and **5** music that suits your expectation the most, by simply checking the below indexes.
+            - You could play them directly or save them into your local machine by right-clicking on them.
+        ''')
         with gr.Row():
+            
             with gr.Column():
                 show_video_id = gr.Dropdown(label="Select a video", value=1, choices=video_id_list, interactive=True)
             with gr.Column():
@@ -214,6 +251,7 @@ if __name__ == "__main__":
         gr.Markdown(
             """
             ## Get the final output
+            Click the merge button and the 5 individual clips of videos would be merged into one single output. Have fun!
             """
         )
         with gr.Row():
