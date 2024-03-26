@@ -147,6 +147,8 @@ class AnimateDiffPipeline:
         return i
     
     def track_generation_progress(self, progress=gr.Progress()):
+        # wait for savedir update
+        time.sleep(3)
         # track generation progress
         i = 0
         progress_step = 1 / self.num_samples
@@ -156,6 +158,11 @@ class AnimateDiffPipeline:
             progress(progress_step * i, f"generating the {i + 1}th sample")
             time.sleep(1)
         return gr.Video(label="Generated video", value=f"{self.savedir}/0-{self.save_prompt}.mp4", visible=True)
+
+    def restart(self):
+        self.savedir = ""
+        self.save_prompt = ""
+        print("AnimateDiff pipeline restarted")
         
         
 

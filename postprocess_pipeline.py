@@ -64,3 +64,14 @@ class PostprocessPipeline:
 
         final_output = video.set_audio(music)
         final_output.write_videofile(self.output_folder + "/final_output.mp4", codec="libx264", audio_codec="aac")
+
+    def restart(self):
+        self.video_folder_path = ""
+        self.video_save_prompt = ""
+        self.video_duration = 0
+
+        self.music_folder_path = ""
+        self.music_save_prompt = ""
+
+        self.output_folder = ""
+        print("postprocess pipeline restarted")
