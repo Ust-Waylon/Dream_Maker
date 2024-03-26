@@ -77,6 +77,61 @@ class communication_module:
         self.postprocess_pipeline.postprocess_music(music_id)
         self.postprocess_pipeline.combine_video_music()
         return gr.Video(label="Merged output", value=self.postprocess_pipeline.output_path + "final_output.mp4", visible=True)
+    
+    def restart(self):
+        self.animatediff_pipeline.restart()
+        self.musicgen_pipeline.restart()
+        self.postprocess_pipeline.restart()
+        self.stage = "communication about video"
+        self.messages = []
+        self.video_prompt = ""
+        self.music_prompt = ""
+
+        # renew all the gradio items
+        # remember to change the gradio items here if there is any change to them
+        cm.init_messages(video_system_content)
+
+        video_greet_message = """
+        Hi, this is Dream-maker.
+        Tell me anything, and I will turn your dream into an amazing video.
+        """
+
+        new_chatbot = gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, video_greet_message]])
+        new_msg = gr.Textbox(label="Input")
+
+        new_export_prompt_btn = gr.Button(value = "Export prompt")
+        new_move_to_next_stage_btn = gr.Button(value = "move to the next stage", visible=False)
+
+        new_video_prompt_textbox = gr.Textbox(label="video prompt", lines=2, max_lines=2)
+        new_generate_video_btn = gr.Button(value = "Generate video", visible=False)
+        new_music_prompt_textbox = gr.Textbox(label="music prompt", lines=2, max_lines=2)
+        new_generate_music_btn = gr.Button(value = "Generate music", visible=False)
+
+        new_show_video_id = gr.Dropdown(label="Select a video", value=1, choices=[i for i in range(1,self.animatediff_pipeline.num_samples+1)], interactive=True)
+        new_show_music_id = gr.Dropdown(label="Select a music", value=1, choices=[i for i in range(1,self.musicgen_pipeline.num_samples+1)], interactive=True)
+        new_generated_video = gr.Video(label="Generated video", value=None, visible=True)
+        new_generated_music = gr.Audio(label="Generated music", value=None, visible=True)
+
+        new_selected_video_id = gr.CheckboxGroup([i for i in range(1,self.animatediff_pipeline.num_samples+1)], label="Select videos for final output")
+        new_selected_music_id = gr.Radio([i for i in range(1,self.musicgen_pipeline.num_samples+1)], label="Select music for final output")
+        
+        new_btn_merge = gr.Button(value = "Merge generated video and music")
+        new_merged_output = gr.Video(label="Merged output", visible=False)
+
+        new_btn_evaluation = gr.Button(value="move on to the system evaluation!", visible=False)
+        
+        return_list = [new_chatbot, new_msg, 
+                       new_export_prompt_btn, new_move_to_next_stage_btn, 
+                       new_video_prompt_textbox, new_generate_video_btn, 
+                       new_music_prompt_textbox, new_generate_music_btn, 
+                       new_show_video_id, new_show_music_id, 
+                       new_generated_video, new_generated_music, 
+                       new_selected_video_id, new_selected_music_id, 
+                       new_btn_merge, new_merged_output, new_btn_evaluation]
+
+        print("commnication module restarted")
+
+        return return_list
 
 
 if __name__ == "__main__":
@@ -108,9 +163,13 @@ if __name__ == "__main__":
         msg.submit(cm.respond, [msg, chatbot], [msg, chatbot])
 
         # Click to generate video and switch to music chatbot
-        export_prompt_btn = gr.Button(value = "Export prompt")
+        with gr.Row():
+            with gr.Column(scale=3):
+                export_prompt_btn = gr.Button(value = "Export prompt")
+                move_to_next_stage_btn = gr.Button(value = "move to the next stage", visible=False)
+            with gr.Column(scale=1):
+                restart_btn = gr.Button(value = "Restart")
 
-        move_to_next_stage_btn = gr.Button(value = "move to the next stage", visible=False)
         move_to_next_stage_btn.click(cm.move_to_next_stage, inputs = [chatbot], outputs = [chatbot])
 
         with gr.Row():
@@ -164,6 +223,73 @@ if __name__ == "__main__":
         merged_output = gr.Video(label="Merged output", visible=False)
 
         btn_merge.click(cm.postprocess_to_final_output, inputs = [seleted_video_id, seleted_music_id], outputs = merged_output)
+
+        btn_evaluation = gr.Button(value="move on to the system evaluation", visible=False)
+
+        evaluation_confirm_choices = ["Yes", "No"]
+        with gr.Row():
+            evaluation_confirm_1 = gr.Radio(evaluation_confirm_choices, label="Do you want to evaluate the performance of the Dream-maker?", visible=False)
+            evaluation_confirm_2 = gr.Radio(evaluation_confirm_choices, label="Would you grant us permission to collect your evaluation results?", visible=False)
+
+        evaluation_title_value = """
+        ## System Evaluation
+        Please evaluate the performance of the Dream-maker system.
+        """
+        evaluation_title = gr.Markdown(value=evaluation_title_value, visible=True)
+
+        # evaluation_choices = ["Terrible", "Bad", "Okay", "Good", "Excellent"]
+        # evaluation_choices = ["Completely Disagree", "Disagree", "Neutral", "Agree", "Completely Agree"]
+        # evaluation_choices = ["Completely no", "No", "Neutral", "Yes", "Completely yes"]
+        # evaluation_choices = ["No", "Sometimes yes, sometimes no", "Yes"]
+
+        # Part 1: Evaluate the performance of the communication system
+        evaluation_subtitle_1_value = """
+        ### Evaluation Part 1: Evaluate the performance of the communication system
+        """
+        evaluation_subtitle_1 = gr.Markdown(value=evaluation_subtitle_1_value, visible=True)
+
+        evaluation_1_1 = gr.Markdown(value="#### 1.1: About questioning", visible=True)
+        evaluation_choices = ["No", "Sometimes yes, sometimes no", "Yes"]
+        evaluation_1_1_1 = gr.Radio(evaluation_choices, label="Did the communication module ask questions clearly and politely?", visible=True)
+        evaluation_1_1_2 = gr.Radio(evaluation_choices, label="Are the questions directly related to the elements needed for video generation?", visible=True)
+        evaluation_choices = ["No", "Yes"]
+        evaluation_1_1_3 = gr.Radio(evaluation_choices, label="Are there any repetitive questions?", visible=True)
+
+        evaluation_1_2 = gr.Markdown(value="#### 1.2: About prompt generation", visible=True)
+        evaluation_choices = ["No", "Yes"]
+        evaluation_1_2_1 = gr.Radio(evaluation_choices, label="Does the communication module comprehensively integrate valid information from user's responses into the prompt for video generation?", visible=True)
+        evaluation_1_2_2 = gr.Radio(evaluation_choices, label="Does the communication module comprehensively integrate valid information from user's responses into the prompt for music generation?", visible=True)
+
+        # Part 2: Evaluate the performance of the video generation
+        evaluation_subtitle_2_value = """
+        ### Evaluation Part 2: Evaluate the performance of the video generation
+        """
+        evaluation_subtitle_2 = gr.Markdown(value=evaluation_subtitle_2_value, visible=True)
+
+        evaluation_2_1 = gr.Markdown(value="#### 2.1: About video quality", visible=True)
+        evaluation_2_2 = gr.Markdown(value="#### 2.2: About prompt alignment", visible=True)
+
+        # Part 3: Evaluate the performance of the music generation
+        evaluation_subtitle_3_value = """
+        ### Evaluation Part 3: Evaluate the performance of the music generation
+        """
+        evaluation_subtitle_3 = gr.Markdown(value=evaluation_subtitle_3_value, visible=True)
+
+        evaluation_3_1 = gr.Markdown(value="#### 3.1: About music quality", visible=True)
+        evaluation_3_2 = gr.Markdown(value="#### 3.2: About prompt alignment", visible=True)
+
+
+        evaluation_confirm_3 = gr.Radio(evaluation_confirm_choices, label="Would you grant us permission to save the music video that you just generated by Dream-maker for further analysis?", visible=False)
+
+        item_list = [chatbot, msg, 
+                     export_prompt_btn, move_to_next_stage_btn, 
+                     video_prompt_textbox, generate_video_btn, 
+                     music_prompt_textbox, generate_music_btn, 
+                     show_video_id, show_music_id, 
+                     generated_video, generated_music, 
+                     seleted_video_id, seleted_music_id, 
+                     btn_merge, merged_output, btn_evaluation]
+        restart_btn.click(cm.restart, outputs = item_list)
         
     demo.queue()
     demo.launch(max_threads=40)
