@@ -53,6 +53,8 @@ class MusicGenPipeline:
         return i
     
     def track_generation_progress(self, progress=gr.Progress()):
+        # wait for savedir update
+        time.sleep(3)
         # track generation progress
         i = 0
         progress_step = 1 / self.num_samples
@@ -63,3 +65,8 @@ class MusicGenPipeline:
                 progress(progress_step * i, f"generating the {i+1}th sample")
             time.sleep(0.5)
         return gr.Audio(label="Generated music", value=f"{self.savedir}/0-{self.save_prompt}.wav", visible=True)
+    
+    def restart(self):
+        self.savedir = ""
+        self.save_prompt = ""
+        print("musicgen pipeline restarted")
