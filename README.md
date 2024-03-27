@@ -1,6 +1,6 @@
 # Dream Maker: A chat-based music video generation system
 <p align="center">
-    <img src="readme/framework.png" alt="My Image" style="max-width:450;" />
+    <img src="readme/framework_updated.jpg" alt="My Image" style="max-width:400;" />
 </p>
 
 We want to develop a user-friendly system that aims to concretely show the user's imagination through a short music video based on LLMs and generation models. The figure above shows the architecture of our system.  
