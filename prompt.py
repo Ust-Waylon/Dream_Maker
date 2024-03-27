@@ -14,7 +14,6 @@ video_system_content = """
 
     You can ask me questions about the following aspects:
     - more details about the main character
-    - the picture style of the video
     - the color palette of the video
     - the atmosphere of the video
     - the camera angle of the video
