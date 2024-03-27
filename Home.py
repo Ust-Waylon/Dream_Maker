@@ -54,43 +54,43 @@ class communication_module:
             self.stage = "communication about music"
         if self.stage == "communication about music":
             self.init_messages(music_system_content(self.video_prompt))
-        return gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message(self.video_prompt)]])
+        return gr.Chatbot(show_copy_button=True, show_share_button=True, value=[[None, music_greet_message(self.video_prompt)]]), gr.Button(value="move to the next stage", visible=False)
     
     def export_prompt(self, chatbot):
         if self.stage == "communication about video":
             self.video_prompt = re.findall(r'\[(.*?)\]', chatbot[-1][-1])[0]
             video_visible = True
             music_visible = False
-            chatbot_type_instruction = gr.Markdown(
-                '''
-                ## Music generation model
-                Answer the chatbot's serial question, and it will generate the Music prompt for you.
-                The chatbot is a communication model, feel free to propose question or ask for its idea.
-                '''
-            )
+            # chatbot_type_instruction = gr.Markdown(
+            #     '''
+            #     ## Music generation model
+            #     Answer the chatbot's serial question, and it will generate the Music prompt for you.
+            #     The chatbot is a communication model, feel free to propose question or ask for its idea.
+            #     '''
+            # )
         elif self.stage == "communication about music":
             self.music_prompt = re.findall(r'\[(.*?)\]', chatbot[-1][-1])[0]
             video_visible = True
             music_visible = True
-            chatbot_type_instruction = gr.Markdown(
-                '''
-                ## Music generation model
-                Answer the chatbot's serial question, and it will generate the Music prompt for you.
-                The chatbot is a communication model, feel free to propose question or ask for its idea.
-                '''
-            )
+            # chatbot_type_instruction = gr.Markdown(
+            #     '''
+            #     ## Music generation model
+            #     Answer the chatbot's serial question, and it will generate the Music prompt for you.
+            #     The chatbot is a communication model, feel free to propose question or ask for its idea.
+            #     '''
+            # )
         updated_video_Textbox = gr.Textbox(label="video prompt", value=self.video_prompt)
         updated_music_Textbox = gr.Textbox(label="music prompt", value=self.music_prompt)
         updated_video_button = gr.Button(value="Generate video", visible=video_visible)
         updated_music_button = gr.Button(value="Generate music", visible=music_visible)
-        return updated_video_Textbox, updated_music_Textbox, updated_video_button, updated_music_button, gr.Button(value="move to the next stage", visible=True), chatbot_type_instruction
+        return updated_video_Textbox, updated_music_Textbox, updated_video_button, updated_music_button, gr.Button(value="move to the next stage", visible=True)
     
     def postprocess_to_final_output(self, video_id_list, music_id):
         self.postprocess_pipeline.set_source_path(self.animatediff_pipeline, self.musicgen_pipeline)
         self.postprocess_pipeline.postprocess_video(video_id_list)
         self.postprocess_pipeline.postprocess_music(music_id)
         self.postprocess_pipeline.combine_video_music()
-        return gr.Video(label="Merged output", value=self.postprocess_pipeline.output_path + "final_output.mp4", visible=True)
+        return gr.Video(label="Merged output", value=self.postprocess_pipeline.output_folder + "/final_output.mp4", visible=True)
     
     def restart(self):
         self.animatediff_pipeline.restart()
@@ -132,7 +132,7 @@ class communication_module:
         new_btn_merge = gr.Button(value = "Merge generated video and music")
         new_merged_output = gr.Video(label="Merged output", visible=False)
 
-        new_btn_evaluation = gr.Button(value="move on to the system evaluation!", visible=False)
+        # new_btn_evaluation = gr.Button(value="move on to the system evaluation!", visible=False)
         
         return_list = [new_chatbot, new_msg, 
                        new_export_prompt_btn, new_move_to_next_stage_btn, 
@@ -141,7 +141,7 @@ class communication_module:
                        new_show_video_id, new_show_music_id, 
                        new_generated_video, new_generated_music, 
                        new_selected_video_id, new_selected_music_id, 
-                       new_btn_merge, new_merged_output, new_btn_evaluation]
+                       new_btn_merge, new_merged_output]
 
         print("commnication module restarted")
 
@@ -159,16 +159,17 @@ if __name__ == "__main__":
         
         gr.Markdown(
         """
-        # Dream-maker Demo 
-        Type in to chat with our chatbot.
+        # Dream-maker 
+        Hi! This is Dream-maker! Talk to me, and I will turn your dream into an amazing music video!
         """)
 
-        chatbot_type_instruction = gr.Markdown(
+        gr.Markdown(
             '''
-            ## Video generation model
-            Answer the chatbot's serial questions, and it will generate the video prompt for you.
-
-            The chatbot is a communication model, feel free to propose questions or ask for its idea.
+            ## Chatbox
+            - You can chat with the Dream-maker through this chatbox. Press enter to send your message.
+            - He would ask you a few questions about your preference and expectation.
+            - If you have no idea for the questions' answer, feel free to ask him for his suggestion!
+            - When he responds with a prompt (like "Here is my prompt: [...]"), then press the "Export prompt" button below the chatbox to export the prompt. 
             '''
         )
         
@@ -187,19 +188,20 @@ if __name__ == "__main__":
 
         # Click to generate video and switch to music chatbot
         with gr.Row():
-            with gr.Column(scale=3):
+            with gr.Column(scale=4):
                 export_prompt_btn = gr.Button(value = "Export prompt")
-                move_to_next_stage_btn = gr.Button(value = "move to the next stage", visible=False)
             with gr.Column(scale=1):
                 restart_btn = gr.Button(value = "Restart")
+        move_to_next_stage_btn = gr.Button(value = "move to the next stage", visible=False)
 
-        move_to_next_stage_btn.click(cm.move_to_next_stage, inputs = [chatbot], outputs = [chatbot])
+        move_to_next_stage_btn.click(cm.move_to_next_stage, inputs = [chatbot], outputs = [chatbot, move_to_next_stage_btn])
 
         gr.Markdown(
             '''
-            If you are not satisfied with the generated prompt, you could manually change them in the prompt textbox before passing them into the generation model.
-            
-            Click the generate button beneath the prompt box to generate video or music, there will be 10 samples in a batch and it would take some time to finish.
+            - Click the generate button below the prompt textbox to generate video or music.
+            - After you click the button for video generation, it would take around 3 minutes to generate the video.
+            - At the same time, you could click the "Move to the next stage" button to talk about your music preference with the Dream-maker in the same chatbox.
+            - If you are not satisfied with the generated prompt, you could manually edit them in the prompt textbox before passing them into the generation model.
             '''
         )
 
@@ -213,7 +215,7 @@ if __name__ == "__main__":
                 generate_music_btn = gr.Button(value = "Generate music", visible=False)
 
         export_prompt_btn.click(cm.export_prompt, inputs = [chatbot], 
-                                outputs = [video_prompt_textbox, music_prompt_textbox, generate_video_btn, generate_music_btn, move_to_next_stage_btn, chatbot_type_instruction])
+                                outputs = [video_prompt_textbox, music_prompt_textbox, generate_video_btn, generate_music_btn, move_to_next_stage_btn])
         
 
         gr.Markdown(
@@ -225,9 +227,8 @@ if __name__ == "__main__":
         video_id_list = [i for i in range(1,cm.animatediff_pipeline.num_samples+1)]
         music_id_list = [i for i in range(1,cm.musicgen_pipeline.num_samples+1)]
         gr.Markdown('''
-            - After finising generating the outputs, they are shown below. You can check the output one-by-one by selecting the dropdown menu above.      
-            - You may select **5** videos and **5** music that suits your expectation the most, by simply checking the below indexes.
-            - You could play them directly or save them into your local machine by right-clicking on them.
+            - After finising generating the outputs, they will be shown below. You can check the output one-by-one by selecting the index in the dropdown menu above.      
+            - You could play them directly or save them into your local machine by clicking the download button on the top-right corner of the player.
         ''')
         with gr.Row():
             
@@ -251,73 +252,29 @@ if __name__ == "__main__":
         gr.Markdown(
             """
             ## Get the final output
-            Click the merge button and the 5 individual clips of videos would be merged into one single output. Have fun!
+             - You need to select **5** videos and **1** music that best meet your expectations, by simply checking the corresponding indexes below.
+             - Then click the "Merge generated video and music" button to merge the selected video and music into a final output.
+             - You can save the final output to your local machine by clicking the download button on the top-right corner of the player.
             """
         )
         with gr.Row():
-            seleted_video_id = gr.CheckboxGroup(video_id_list, label="Select videos for final output")
-            seleted_music_id = gr.Radio(music_id_list, label="Select music for final output")
+            seleted_video_id = gr.CheckboxGroup(video_id_list, label="Select 5 videos for final output")
+            seleted_music_id = gr.Radio(music_id_list, label="Select 1 music for final output")
         btn_merge = gr.Button(value = "Merge generated video and music")
         merged_output = gr.Video(label="Merged output", visible=False)
 
         btn_merge.click(cm.postprocess_to_final_output, inputs = [seleted_video_id, seleted_music_id], outputs = merged_output)
 
-        btn_evaluation = gr.Button(value="move on to the system evaluation", visible=False)
+        # btn_evaluation = gr.Button(value="move on to the system evaluation", visible=False)
 
-        evaluation_confirm_choices = ["Yes", "No"]
-        with gr.Row():
-            evaluation_confirm_1 = gr.Radio(evaluation_confirm_choices, label="Do you want to evaluate the performance of the Dream-maker?", visible=False)
-            evaluation_confirm_2 = gr.Radio(evaluation_confirm_choices, label="Would you grant us permission to collect your evaluation results?", visible=False)
+        gr.Markdown(
+            '''
+            ## System evaluation
+            We value your feedback, please click on this link (https://forms.gle/HJVZp5yQvf3hjaq76) and fill out a questionnarie and share your thoughts with us!
+            '''
+        )
 
-        evaluation_title_value = """
-        ## System Evaluation
-        Please evaluate the performance of the Dream-maker system.
-        """
-        evaluation_title = gr.Markdown(value=evaluation_title_value, visible=True)
-
-        # evaluation_choices = ["Terrible", "Bad", "Okay", "Good", "Excellent"]
-        # evaluation_choices = ["Completely Disagree", "Disagree", "Neutral", "Agree", "Completely Agree"]
-        # evaluation_choices = ["Completely no", "No", "Neutral", "Yes", "Completely yes"]
-        # evaluation_choices = ["No", "Sometimes yes, sometimes no", "Yes"]
-
-        # Part 1: Evaluate the performance of the communication system
-        evaluation_subtitle_1_value = """
-        ### Evaluation Part 1: Evaluate the performance of the communication system
-        """
-        evaluation_subtitle_1 = gr.Markdown(value=evaluation_subtitle_1_value, visible=True)
-
-        evaluation_1_1 = gr.Markdown(value="#### 1.1: About questioning", visible=True)
-        evaluation_choices = ["No", "Sometimes yes, sometimes no", "Yes"]
-        evaluation_1_1_1 = gr.Radio(evaluation_choices, label="Did the communication module ask questions clearly and politely?", visible=True)
-        evaluation_1_1_2 = gr.Radio(evaluation_choices, label="Are the questions directly related to the elements needed for video generation?", visible=True)
-        evaluation_choices = ["No", "Yes"]
-        evaluation_1_1_3 = gr.Radio(evaluation_choices, label="Are there any repetitive questions?", visible=True)
-
-        evaluation_1_2 = gr.Markdown(value="#### 1.2: About prompt generation", visible=True)
-        evaluation_choices = ["No", "Yes"]
-        evaluation_1_2_1 = gr.Radio(evaluation_choices, label="Does the communication module comprehensively integrate valid information from user's responses into the prompt for video generation?", visible=True)
-        evaluation_1_2_2 = gr.Radio(evaluation_choices, label="Does the communication module comprehensively integrate valid information from user's responses into the prompt for music generation?", visible=True)
-
-        # Part 2: Evaluate the performance of the video generation
-        evaluation_subtitle_2_value = """
-        ### Evaluation Part 2: Evaluate the performance of the video generation
-        """
-        evaluation_subtitle_2 = gr.Markdown(value=evaluation_subtitle_2_value, visible=True)
-
-        evaluation_2_1 = gr.Markdown(value="#### 2.1: About video quality", visible=True)
-        evaluation_2_2 = gr.Markdown(value="#### 2.2: About prompt alignment", visible=True)
-
-        # Part 3: Evaluate the performance of the music generation
-        evaluation_subtitle_3_value = """
-        ### Evaluation Part 3: Evaluate the performance of the music generation
-        """
-        evaluation_subtitle_3 = gr.Markdown(value=evaluation_subtitle_3_value, visible=True)
-
-        evaluation_3_1 = gr.Markdown(value="#### 3.1: About music quality", visible=True)
-        evaluation_3_2 = gr.Markdown(value="#### 3.2: About prompt alignment", visible=True)
-
-
-        evaluation_confirm_3 = gr.Radio(evaluation_confirm_choices, label="Would you grant us permission to save the music video that you just generated by Dream-maker for further analysis?", visible=False)
+        # evaluation_confirm = gr.Radio(evaluation_confirm_choices, label="Would you grant us permission to save the music video that you just generated by Dream-maker for further analysis?", visible=False)
 
         item_list = [chatbot, msg, 
                      export_prompt_btn, move_to_next_stage_btn, 
@@ -326,7 +283,7 @@ if __name__ == "__main__":
                      show_video_id, show_music_id, 
                      generated_video, generated_music, 
                      seleted_video_id, seleted_music_id, 
-                     btn_merge, merged_output, btn_evaluation]
+                     btn_merge, merged_output]
         restart_btn.click(cm.restart, outputs = item_list)
         
     demo.queue()

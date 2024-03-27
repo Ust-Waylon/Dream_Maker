@@ -4,7 +4,7 @@ import os
 from audiocraft.models import MAGNeT
 from audiocraft.data.audio import audio_write
 
-output_dir = "/project/t3_wtanae/communication_module/outputs"
+output_dir = "/project/t3_wtanae/Dream_Maker/outputs"
 
 if __name__ == "__main__":
 
