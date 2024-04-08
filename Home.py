@@ -147,21 +147,78 @@ class communication_module:
 
         return return_list
 
+js = """
+function createGradioAnimation() {
+    var container = document.createElement('div');
+    container.id = 'gradio-animation';
+    container.style.fontSize = '2em';
+    container.style.fontWeight = 'bold';
+    container.style.textAlign = 'center';
+    container.style.marginBottom = '20px';
+
+    var text = 'Hi, this is Dream-maker!';
+    for (var i = 0; i < text.length; i++) {
+        (function(i){
+            setTimeout(function(){
+                var letter = document.createElement('span');
+                letter.style.opacity = '0';
+                letter.style.transition = 'opacity 0.5s';
+                letter.innerText = text[i];
+
+                container.appendChild(letter);
+
+                setTimeout(function() {
+                    letter.style.opacity = '1';
+                }, 50);
+            }, i * 200);
+        })(i);
+    }
+
+    var text2 = 'Talk to me, and I will turn your dream into an amazing music video!';
+    var container2 = document.createElement('div');
+    container2.style.fontSize = '1.5em';
+    container2.style.fontWeight = 'bold';
+    container2.style.textAlign = 'center';
+    container2.style.marginBottom = '20px';
+
+    for (var j = 0; j < text2.length; j++) {
+        (function(j){
+            setTimeout(function(){
+                var letter2 = document.createElement('span');
+                letter2.style.opacity = '0';
+                letter2.style.transition = 'opacity 0.5s';
+                letter2.innerText = text2[j];
+
+                container2.appendChild(letter2);
+
+                setTimeout(function() {
+                    letter2.style.opacity = '1';
+                }, 50);
+            }, j * 100 + (text.length + 1) * 200);
+        })(j);
+    }
+
+    var gradioContainer = document.querySelector('.gradio-container');
+    gradioContainer.insertBefore(container2, gradioContainer.firstChild);
+    gradioContainer.insertBefore(container, gradioContainer.firstChild);
+
+    return 'Animation created';
+}
+"""
 
 if __name__ == "__main__":
 
     cm = communication_module()
     
     # build an interface using gradio
-    with gr.Blocks() as demo:
+    with gr.Blocks(js = js) as demo:
 
         cm.init_messages(video_system_content)
         
-        gr.Markdown(
-        """
-        # Dream-maker 
-        Hi! This is Dream-maker! Talk to me, and I will turn your dream into an amazing music video!
-        """)
+        # gr.Markdown(
+        # """
+        # Talk to me, and I will turn your dream into an amazing music video!
+        # """)
 
         gr.Markdown(
             '''
