@@ -51,7 +51,8 @@ Running on local URL:  http://127.0.0.1:7860
 To be updated.
 
 ## Demo outputs
-To be updated.
+[![Watch the video](https://youtu.be/wcQRUkgscEU/maxresdefault.jpg)](https://youtu.be/wcQRUkgscEU)
+More demo videos are coming soon!
 
 ## Acknowledgements
 Video generation model [AnimateDiff](https://github.com/guoyww/AnimateDiff).  
