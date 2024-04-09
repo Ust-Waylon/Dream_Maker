@@ -51,8 +51,14 @@ Running on local URL:  http://127.0.0.1:7860
 To be updated.
 
 ## Demo outputs
-[![Watch the video](https://youtu.be/wcQRUkgscEU/maxresdefault.jpg)](https://youtu.be/wcQRUkgscEU)
-More demo videos are coming soon!
+
+https://github.com/Ust-Waylon/Dream_Maker/assets/94538865/123723d3-2788-4fb5-9960-cbff3a709cb0
+
+https://github.com/Ust-Waylon/Dream_Maker/assets/94538865/290e3431-222d-4a46-a5f9-9f951a36b6ef
+
+https://github.com/Ust-Waylon/Dream_Maker/assets/94538865/8bb22729-4822-4f2d-a926-59e2fa2f7995
+
+ More demo videos are coming soon!
 
 ## Acknowledgements
 Video generation model [AnimateDiff](https://github.com/guoyww/AnimateDiff).  
