@@ -121,6 +121,10 @@ class communication_module:
         new_music_prompt_textbox = gr.Textbox(label="music prompt", lines=2, max_lines=2)
         new_generate_music_btn = gr.Button(value = "Generate music", visible=False)
 
+        # video_id_list = [i for i in range(1,self.animatediff_pipeline.num_samples+1)]
+        # music_id_list = [i for i in range(1,self.musicgen_pipeline.num_samples+1)]
+        # new_show_video_id = gr.Radio(video_id_list, label="Select a video", interactive=False)
+        # new_show_music_id = gr.Radio(music_id_list, label="Select a music", interactive=False)
         new_show_video_id = gr.Dropdown(label="Select a video", value=1, choices=[i for i in range(1,self.animatediff_pipeline.num_samples+1)], interactive=True)
         new_show_music_id = gr.Dropdown(label="Select a music", value=1, choices=[i for i in range(1,self.musicgen_pipeline.num_samples+1)], interactive=True)
         new_generated_video = gr.Video(label="Generated video", value=None, visible=True)
@@ -287,8 +291,14 @@ if __name__ == "__main__":
             - After finising generating the outputs, they will be shown below. You can check the output one-by-one by selecting the index in the dropdown menu above.      
             - You could play them directly or save them into your local machine by clicking the download button on the top-right corner of the player.
         ''')
+
+        # with gr.Row():
+        #     with gr.Column():
+        #         show_video_id = gr.Radio(video_id_list, label="Select a video", interactive=False)
+        #     with gr.Column():
+        #         show_music_id = gr.Radio(music_id_list, label="Select a music", interactive=False)
+
         with gr.Row():
-            
             with gr.Column():
                 show_video_id = gr.Dropdown(label="Select a video", value=1, choices=video_id_list, interactive=True)
             with gr.Column():
